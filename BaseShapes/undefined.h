@@ -6,7 +6,7 @@ Language:		C++
 Library:		Open Inventor C++ 10.3.1 Visual Studio 2017
 Author:			LIM TAE KYUN
 First Date:		2019-09-24
-Last Modify:	2019-09-30
+Last Modify:	2019-10-08
 ===============================================================*/
 #ifndef _UNDEFINED_H_
 #define _UNDEFINED_H_
@@ -45,13 +45,6 @@ public:
 	void ChangeVertices(const int size, SbVec3f* vertices);
 
 	inline const int size() const { return size_; }
-	inline void set_shape_type(const ShapeType& type)
-	{
-		if (EqualType(type) == false)
-		{
-			shape_type_.setValue(static_cast<int>(type));
-		}
-	}		
 
 protected:	
 	virtual ~UnDefined();
@@ -60,18 +53,17 @@ private:
 	UnDefined() {};
 	virtual void InitBaseProperties() override;
 
-	void Initialize();
+	void Initialize(const ShapeType& type);
 	void ShapeTypeChange();
-	bool EqualType(const ShapeType& type) const;
+	//bool EqualType(const ShapeType& type) const;
 
 	static void TypeSensorCallBack(void* data, SoSensor* sensor);
 
 public:
-	SoSFInt32 shape_type_;
+	SoSFEnum shape_type_;
 
 private:
 	SoFieldSensor* type_sensor_ = nullptr;
-	SoSeparator* shape_seperator_ = nullptr;;
 	SoLineSet* line_set_ = nullptr;
 	SoFaceSet* face_set_ = nullptr;
 	SoVertexProperty* vertex_prop_ = nullptr;

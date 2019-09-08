@@ -33,9 +33,8 @@ UnDefined::UnDefined(const int size, SbVec3f* vertices, const ShapeType& type /*
 	{
 		vertex_list_[i] = vertices[i];
 	}
-
-	Initialize();
-	set_shape_type(type);
+		
+	Initialize(type);
 }
 
 UnDefined::~UnDefined()
@@ -112,20 +111,30 @@ void UnDefined::InitBaseProperties()
 	vertex_prop_ = new SoVertexProperty();
 	vertex_prop_->vertex.setValues(0, size_, &vertex_list_.front());	
 
-	shape_seperator_ = new SoSeparator();
+	int type = shape_type_.getValue();
+	if (type == static_cast<int>(ShapeType::LINE))
 	{
 		line_set_ = new SoLineSet();
-		shape_seperator_->addChild(line_set_);
+		line_set_->vertexProperty.setValue(vertex_prop_);
+		addChild(line_set_);
 	}
-
-	addChild(vertex_prop_);
-	addChild(shape_seperator_);
+	else if (type == static_cast<int>(ShapeType::FACE))
+	{
+		face_set_ = new SoFaceSet();
+		face_set_->vertexProperty.setValue(vertex_prop_);
+		addChild(face_set_);
+	}	
 }
 
-void UnDefined::Initialize()
+void UnDefined::Initialize(const ShapeType& type)
 {
 	SO_NODE_CONSTRUCTOR(UnDefined);
 	SO_NODE_ADD_FIELD(shape_type_, (static_cast<int>(ShapeType::LINE)));
+	SO_NODE_DEFINE_ENUM_VALUE(ShapeType, static_cast<int>(ShapeType::LINE));
+	SO_NODE_DEFINE_ENUM_VALUE(ShapeType, static_cast<int>(ShapeType::FACE));
+	SO_NODE_SET_SF_ENUM_TYPE(shape_type_, ShapeType);
+
+	shape_type_.setValue(static_cast<int>(type));
 
 	InitBaseProperties();
 
@@ -136,37 +145,39 @@ void UnDefined::Initialize()
 
 void UnDefined::ShapeTypeChange()
 {
-	shape_seperator_->removeChild(0);
+	int size = getNumChildren();
+	removeChild(size - 1);
+
+	vertex_prop_ = new SoVertexProperty();
+	vertex_prop_->vertex.setValues(0, size_, &vertex_list_.front());
+	vertex_prop_->orderedRGBA.setValue(color_.getPackedValue(transparency_));
+
 	int shape_type = shape_type_.getValue();
 	if (shape_type == static_cast<int>(ShapeType::LINE))
-	{
+	{		
 		line_set_ = new SoLineSet();
+		line_set_->vertexProperty.setValue(vertex_prop_);
 		face_set_ = nullptr;
-		shape_seperator_->addChild(line_set_);
+		addChild(line_set_);
 	}
 	else if (shape_type == static_cast<int>(ShapeType::FACE))
 	{
 		face_set_ = new SoFaceSet();
+		face_set_->vertexProperty.setValue(vertex_prop_);
 		line_set_ = nullptr;
-		shape_seperator_->addChild(face_set_);
-	}
-	else
-	{
-		line_set_ = new SoLineSet();
-		face_set_ = nullptr;
-		shape_seperator_->addChild(line_set_);
+		addChild(face_set_);
 	}
 }
 
-bool UnDefined::EqualType(const ShapeType& type) const
-{
-	if (shape_type_.getValue() == static_cast<int>(type))
-	{
-		return true;
-	}
-
-	return false;
-}
+//bool UnDefined::EqualType(const ShapeType& type) const
+//{
+//	if (shape_type_.getValue() == static_cast<int>(type))
+//	{
+//		return true;
+//	}
+//
+//	return false;
+//}
 
 void UnDefined::TypeSensorCallBack(void* data, SoSensor* sensor)
 {
