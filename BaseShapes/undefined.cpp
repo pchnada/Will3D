@@ -1,7 +1,5 @@
 #include "undefined.h"
 
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoFaceSet.h>
 #include <Inventor/sensors/SoFieldSensor.h>
