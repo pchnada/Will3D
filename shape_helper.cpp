@@ -9,8 +9,8 @@
 
 static SoSeparator* MakeSplineCurveSep(SbVec3f* input_pt, int num, float detail = 0.05f, SoSeparator* target_sep = nullptr);
 static SoSeparator* MakeLineSep(SbVec3f* input_pt, int num = 2, SoSeparator* target_sep = nullptr);
-static int Create3DSplineCurve(SbVec3f* input_pt, SbVec3f* output, int num, float detail = 0.05f, bool inverse = false);
-static int Create3DSplineCurve(SbVec3f* input_pt, std::vector<SbVec3f>* output_pt, int num, float detail = 0.05f, bool inverse = false);
+static int Create3DSplineCurve(SbVec3f* input_pt, SbVec3f* output, int num, float detail = 0.05f);
+static int Create3DSplineCurve(SbVec3f* input_pt, std::vector<SbVec3f>* output_pt, int num, float detail = 0.05f);
 
 SoSeparator* MakeSplineCurveSep(SbVec3f* input_pt, int num, float detail, SoSeparator* target_sep)
 {
@@ -155,7 +155,7 @@ SoSeparator* MakeLineSep(SbVec3f* input_pt, int num, SoSeparator* target_sep)
 	}
 }
 
-int Create3DSplineCurve(SbVec3f* input_pt, SbVec3f* output, int num, float detail, bool inverse)
+int Create3DSplineCurve(SbVec3f* input_pt, SbVec3f* output, int num, float detail)
 {
 	if (detail < 0.04f)
 	{
@@ -229,7 +229,7 @@ int Create3DSplineCurve(SbVec3f* input_pt, SbVec3f* output, int num, float detai
 	return index;
 }
 
-int Create3DSplineCurve(SbVec3f * input_pt, std::vector<SbVec3f>* output_pt, int num, float detail, bool inverse)
+int Create3DSplineCurve(SbVec3f * input_pt, std::vector<SbVec3f>* output_pt, int num, float detail)
 {
 	if (detail < 0.04f)
 	{
