@@ -248,13 +248,23 @@ void Spline::SetSpline()
 {
 	if (in_points_size_ > 1)
 	{
-		size_t size = resampler_->outPolyline.getSize();
+		size_t out_size = resampler_->outPolyline.getSize();
 		const SbVec3f* points = resampler_->outPolyline.getValue();
+		SbVec3f* new_out_points = new SbVec3f[out_size + 1];
+
+		for (int i = 0; i < out_size; ++i)
+		{
+			new_out_points[i] = points[i];
+		}
+
+		const SbVec3f* in_points = resampler_->inPolyline.getValues(0);
+		new_out_points[out_size] = in_points[in_points_size_ - 1];
 
 		SoLineSet* line_set = FindShape();
 		SoVertexProperty* vertex_property = static_cast<SoVertexProperty*>(line_set->vertexProperty.getValue());
 		vertex_property->vertex.deleteValues(0);
-		vertex_property->vertex.setValuesPointer(static_cast<int>(size), points);
+		vertex_property->vertex.setValues(0, static_cast<int>(out_size + 1), new_out_points);
+		SafeDeleteArray(new_out_points);
 	}
 	else if (in_points_size_ <= 1)
 	{

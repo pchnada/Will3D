@@ -25,7 +25,8 @@ public:
 	enum class LineType
 	{
 		VERTICAL,
-		HORIZONTAL
+		HORIZONTAL,
+		CUSTOM
 	};
 
 	static void InitClass();
